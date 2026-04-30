@@ -6,14 +6,10 @@ import Overlay from './components/ui/Overlay';
 function App() {
   return (
     <AppProvider>
-      {/* 
-        The outer container must be able to scroll to trigger Framer Motion's useScroll.
-        We make it tall enough to have scroll sections.
-      */}
-      <div className="relative w-full" style={{ height: '200vh' }}>
-        <Scene />
-        <Overlay />
-      </div>
+      {/* 3D globe stays fixed behind everything */}
+      <Scene />
+      {/* Scrollable UI overlay on top */}
+      <Overlay />
     </AppProvider>
   );
 }

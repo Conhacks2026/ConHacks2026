@@ -1,104 +1,95 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Vector3, MathUtils } from 'three';
+import { Html } from '@react-three/drei';
+import { Vector3 } from 'three';
 
 export default function LocationPin({ location, isSelected }) {
   const groupRef = useRef();
-  const orbRef = useRef();
-  const ringRef = useRef();
-  const [mounted, setMounted] = useState(false);
-  const mountTime = useRef(0);
-
-  useEffect(() => {
-    setMounted(true);
-    mountTime.current = performance.now();
-  }, []);
 
   const latRad = location.lat * (Math.PI / 180);
   const lngRad = -location.lng * (Math.PI / 180);
-  const radius = 2.0;
+  const radius = 2.01;
 
   const x = radius * Math.cos(latRad) * Math.cos(lngRad);
   const y = radius * Math.sin(latRad);
   const z = radius * Math.cos(latRad) * Math.sin(lngRad);
 
-  const surfacePosition = new Vector3(x, y, z);
+  const position = new Vector3(x, y, z);
 
-  useFrame((state) => {
-    if (!groupRef.current) return;
-
-    groupRef.current.lookAt(new Vector3(0, 0, 0));
-    // Rotate to point Y away from center
-    groupRef.current.rotateX(Math.PI / 2);
-
-    const elapsed = (performance.now() - mountTime.current) / 1000;
-    
-    let currentHeightOffset = 0;
-    if (elapsed < 1.0) {
-      const t = Math.min(elapsed / 0.8, 1.0);
-      const c4 = (2 * Math.PI) / 3;
-      const easeOutElastic = t === 0 ? 0 : t === 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
-      currentHeightOffset = 0.5 * (1 - easeOutElastic);
-    }
-
-    const normal = surfacePosition.clone().normalize();
-    groupRef.current.position.copy(surfacePosition).add(normal.multiplyScalar(currentHeightOffset));
-
-    if (isSelected) {
-      const pulse = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.15;
-      if (orbRef.current) {
-        orbRef.current.scale.set(pulse, pulse, pulse);
-        orbRef.current.material.emissiveIntensity = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.5;
-      }
-      if (ringRef.current) {
-        ringRef.current.scale.set(pulse * 1.5, pulse * 1.5, pulse * 1.5);
-        ringRef.current.material.opacity = MathUtils.lerp(ringRef.current.material.opacity, 0.4 + Math.sin(state.clock.elapsedTime * 4) * 0.4, 0.1);
-      }
-    } else {
-      if (orbRef.current) {
-        orbRef.current.scale.set(0.8, 0.8, 0.8);
-        orbRef.current.material.emissiveIntensity = 0.5;
-      }
-      if (ringRef.current) {
-        ringRef.current.scale.set(0.1, 0.1, 0.1);
-        ringRef.current.material.opacity = 0;
-      }
+  useFrame(() => {
+    if (groupRef.current) {
+      groupRef.current.lookAt(new Vector3(0, 0, 0));
+      groupRef.current.rotateX(Math.PI / 2);
     }
   });
 
+  const pinColor = isSelected ? '#ea4335' : '#7c3aed'; // Google red for selected, purple for unselected
+  const pinSize = isSelected ? 40 : 28;
+
   return (
-    <group ref={groupRef}>
-      {/* Map Pin Container - Shifted up so the point is at 0 */}
-      <group position={[0, 0.08, 0]}>
-        {/* Inverted Cone pointing down */}
-        <mesh position={[0, -0.04, 0]} rotation={[Math.PI, 0, 0]}>
-          <coneGeometry args={[0.03, 0.08, 16]} />
-          <meshStandardMaterial color={isSelected ? "#ff0055" : "#a100ff"} roughness={0.2} metalness={0.8} />
-        </mesh>
-        
-        {/* Top Sphere of the pin */}
-        <mesh position={[0, 0, 0]}>
-          <sphereGeometry args={[0.04, 16, 16]} />
-          <meshStandardMaterial color={isSelected ? "#ff0055" : "#a100ff"} roughness={0.2} metalness={0.8} />
-        </mesh>
-
-        {/* Inner Glowing Orb */}
-        <mesh ref={orbRef} position={[0, 0, 0.015]}>
-          <sphereGeometry args={[0.02, 16, 16]} />
-          <meshStandardMaterial 
-            color="#ffffff" 
-            emissive={isSelected ? "#00f3ff" : "#ffffff"}
-            emissiveIntensity={isSelected ? 2 : 0.5}
-            toneMapped={false}
-          />
-        </mesh>
-      </group>
-
-      {/* Surface Glowing Ring */}
-      <mesh ref={ringRef} position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.03, 0.05, 32]} />
-        <meshBasicMaterial color="#00f3ff" transparent opacity={0.6} side={2} />
+    <group ref={groupRef} position={position}>
+      {/* Thin stem */}
+      <mesh position={[0, 0.04, 0]}>
+        <cylinderGeometry args={[0.0015, 0.0015, 0.08, 4]} />
+        <meshBasicMaterial color={pinColor} />
       </mesh>
+
+      {/* Google Maps style teardrop pin via Html */}
+      <group position={[0, 0.09, 0]}>
+        <Html center zIndexRange={[200, 0]} distanceFactor={5} sprite>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.6))',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}>
+            {/* Teardrop shape: rounded square rotated 45deg */}
+            <div style={{
+              width: `${pinSize}px`,
+              height: `${pinSize}px`,
+              backgroundColor: pinColor,
+              borderRadius: '50% 50% 50% 0',
+              transform: 'rotate(-45deg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2.5px solid white',
+              boxShadow: `0 0 14px ${pinColor}88`,
+            }}>
+              {/* White dot in center, rotated back */}
+              <div style={{
+                width: `${pinSize * 0.35}px`,
+                height: `${pinSize * 0.35}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                transform: 'rotate(45deg)',
+              }} />
+            </div>
+            {/* Location name label (only for selected) */}
+            {isSelected && (
+              <div style={{
+                marginTop: '6px',
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                borderRadius: '8px',
+                padding: '3px 10px',
+                border: '1px solid rgba(255,255,255,0.2)',
+              }}>
+                <span style={{
+                  color: 'white',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  fontFamily: "'Inter', sans-serif",
+                  whiteSpace: 'nowrap',
+                }}>
+                  📍 {location.name}
+                </span>
+              </div>
+            )}
+          </div>
+        </Html>
+      </group>
     </group>
   );
 }

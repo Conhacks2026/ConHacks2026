@@ -4,6 +4,7 @@ const AppContext = createContext();
 
 export function AppProvider({ children }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [metricPins, setMetricPins] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
 
@@ -11,6 +12,8 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       selectedLocation,
       setSelectedLocation,
+      metricPins,
+      setMetricPins,
       isSearching,
       setIsSearching,
       searchResults,
