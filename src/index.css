@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Arizonia&family=Inter:wght@300;400;600;800&family=Montserrat:wght@800;900&family=Orbitron:wght@500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @theme {
   --font-sans: 'Inter', sans-serif;
