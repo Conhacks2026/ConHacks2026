@@ -34,7 +34,11 @@ export default function SpaceCanvas() {
           {/* Nebula/Cosmic Fog */}
           <group position={[0, 0, -20]}>
             <Cloud 
+<<<<<<< HEAD
               texture="/elementsinspace/earth_clouds.jpg"
+=======
+              texture="/earth_clouds.jpg"
+>>>>>>> origin/main
               opacity={0.3} 
               speed={0.2} 
               width={20} 
@@ -44,7 +48,11 @@ export default function SpaceCanvas() {
               position={[-10, 5, -5]}
             />
             <Cloud 
+<<<<<<< HEAD
               texture="/elementsinspace/earth_clouds.jpg"
+=======
+              texture="/earth_clouds.jpg"
+>>>>>>> origin/main
               opacity={0.2} 
               speed={0.1} 
               width={25} 

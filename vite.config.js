@@ -1,8 +1,24 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+<<<<<<< HEAD
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+=======
+import cesium from 'vite-plugin-cesium'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss(), cesium()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
+>>>>>>> origin/main
 })
