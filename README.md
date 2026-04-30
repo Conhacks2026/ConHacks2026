@@ -1,16 +1,54 @@
-# React + Vite
+# NightOwl / SkyLens 3D
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project integrates a **FastAPI backend** with a **React + Vite 3D frontend** for an immersive astrophotography planning experience.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Frontend**: React, Vite, Three.js (React Three Fiber), Framer Motion, Tailwind CSS.
+- **Backend**: FastAPI, Skyfield, Gemini AI, Open-Meteo.
 
-## React Compiler
+## Backend Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1.  **Install dependencies**:
+    ```bash
+    python -m venv venv
+    source venv/Scripts/activate  # On Windows: venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
 
-## Expanding the ESLint configuration
+2.  **Run the server**:
+    ```bash
+    uvicorn main:app --reload
+    ```
+    The server runs on `http://127.0.0.1:8000`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Frontend Setup
+
+1.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+2.  **Run the development server**:
+    ```bash
+    npm run dev
+    ```
+
+## API Endpoints
+
+| Method | Path              | Purpose                                          |
+| ------ | ----------------- | ------------------------------------------------ |
+| GET    | `/`               | Health check                                     |
+| POST   | `/api/plan`       | Full plan for a single date/time/target          |
+| POST   | `/api/future`     | Best-window forecast over the next N days        |
+| POST   | `/api/nearby`     | Nearby locations ranked by weather conditions     |
+| POST   | `/api/sky`        | Data for the 3D sky visualization                |
+| POST   | `/api/aurora`     | Aurora forecast for a coordinate                 |
+| POST   | `/api/events`     | "What's up tonight" target-agnostic feed         |
+| POST   | `/api/ai-search`  | Natural-language assistant powered by Gemini     |
+
+## Features
+
+- **3D Visualization**: Immersive space environment with planets and stars.
+- **Real-time Data**: Weather, light pollution, and celestial event tracking.
+- **AI Assistant**: Natural language queries for planning your observation nights.
