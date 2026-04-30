@@ -10,10 +10,8 @@ export default function Moon() {
   const scrollProgress = useRef(0);
   const targetScrollProgress = useRef(0);
 
-  // Load textures
-  const colorMap = useLoader(TextureLoader, '/earth_clouds.jpg');
-  const venusMap = useLoader(TextureLoader, '/venus_texture.png');
-  const marsMap = useLoader(TextureLoader, '/mars_texture.png');
+  // Single remote texture — avoids missing /public assets that left Suspense stuck on null.
+  const colorMap = useLoader(TextureLoader, 'https://unpkg.com/three-globe/example/img/moon.jpg');
   
   useEffect(() => {
     const handleScroll = () => {
@@ -91,10 +89,12 @@ export default function Moon() {
       {/* Venus Sphere (Left) */}
       <mesh ref={venusRef} position={[-4.5, -1.5, -2]}>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial 
-          map={venusMap}
-          roughness={0.4}
-          metalness={0.1}
+        <meshStandardMaterial
+          color="#f6e7c9"
+          emissive="#f2c894"
+          emissiveIntensity={0.15}
+          roughness={0.45}
+          metalness={0.05}
           transparent={true}
           opacity={1.0}
         />
@@ -103,10 +103,12 @@ export default function Moon() {
       {/* Mars Sphere (Right) */}
       <mesh ref={marsRef} position={[4.5, -1.5, -2]}>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial 
-          map={marsMap}
-          roughness={0.8}
-          metalness={0.1}
+        <meshStandardMaterial
+          color="#c45c3c"
+          emissive="#5c1a0a"
+          emissiveIntensity={0.12}
+          roughness={0.85}
+          metalness={0.08}
           transparent={true}
           opacity={1.0}
         />

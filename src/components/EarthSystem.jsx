@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Earth from './Earth';
 import OrbitalRings from './OrbitalRings';
 
-export default function EarthSystem({ onNodeClick }) {
+export default function EarthSystem({ onNodeClick, selectedLocation }) {
   const systemRef = useRef();
   const scrollProgress = useRef(0);
   const targetScrollProgress = useRef(0);
@@ -46,7 +46,7 @@ export default function EarthSystem({ onNodeClick }) {
 
   return (
     <group ref={systemRef}>
-      <Earth />
+      <Earth selectedLocation={selectedLocation} />
       <OrbitalRings onNodeClick={onNodeClick} />
     </group>
   );

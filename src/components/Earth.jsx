@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three';
 import * as THREE from 'three';
+import LocationPin from './LocationPin';
 
 // Custom shader for Day/Night Earth
 const EarthShader = {
@@ -65,16 +66,17 @@ const AtmosphereShader = {
   `
 };
 
-export default function Earth(props) {
+export default function Earth({ selectedLocation, ...props }) {
   const earthRef = useRef();
   const cloudsRef = useRef();
   const scrollProgress = useRef(0);
   const targetScrollProgress = useRef(0);
+  const targetQuaternion = useRef(new THREE.Quaternion());
 
   const [dayMap, nightMap, cloudsMap] = useLoader(TextureLoader, [
-    '/earth_day.jpg',
-    '/earth_night.jpg',
-    '/earth_clouds.jpg'
+    'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
+    'https://unpkg.com/three-globe/example/img/earth-night.jpg',
+    'https://unpkg.com/three-globe/example/img/earth-clouds.png',
   ]);
 
   useEffect(() => {
@@ -101,10 +103,11 @@ export default function Earth(props) {
     // Smoothly interpolate scroll progress (lerp)
     scrollProgress.current += (targetScrollProgress.current - scrollProgress.current) * 0.1;
 
-    // Base rotation
-    earthRef.current.rotation.y += delta * 0.03;
-    if (cloudsRef.current) {
-      cloudsRef.current.rotation.y += delta * 0.04;
+    if (!selectedLocation) {
+      earthRef.current.rotation.y += delta * 0.03;
+      if (cloudsRef.current) {
+        cloudsRef.current.rotation.y += delta * 0.04;
+      }
     }
 
     // Scroll animations
@@ -122,6 +125,22 @@ export default function Earth(props) {
     const targetX = scrollProgress.current * 2;
     earthRef.current.position.x = THREE.MathUtils.lerp(earthRef.current.position.x, targetX, 0.1);
     earthRef.current.position.y = THREE.MathUtils.lerp(earthRef.current.position.y, targetY, 0.1);
+
+    if (selectedLocation?.latitude != null && selectedLocation?.longitude != null) {
+      const lat = Number(selectedLocation.latitude) * (Math.PI / 180);
+      const lon = -Number(selectedLocation.longitude) * (Math.PI / 180);
+      const point = new THREE.Vector3(
+        Math.cos(lat) * Math.cos(lon),
+        Math.sin(lat),
+        Math.cos(lat) * Math.sin(lon),
+      ).normalize();
+      targetQuaternion.current.setFromUnitVectors(point, new THREE.Vector3(0, 0, 1));
+      earthRef.current.quaternion.slerp(targetQuaternion.current, 0.055);
+      if (cloudsRef.current) {
+        cloudsRef.current.quaternion.slerp(targetQuaternion.current, 0.05);
+        cloudsRef.current.rotateY(delta * 0.015);
+      }
+    }
   });
 
   return (
@@ -134,6 +153,9 @@ export default function Earth(props) {
           fragmentShader={EarthShader.fragmentShader}
           uniforms={uniforms}
         />
+        {selectedLocation?.latitude != null && selectedLocation?.longitude != null ? (
+          <LocationPin latitude={selectedLocation.latitude} longitude={selectedLocation.longitude} />
+        ) : null}
       </mesh>
 
       {/* Clouds Layer */}

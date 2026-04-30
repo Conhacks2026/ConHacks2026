@@ -4,8 +4,9 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { Cloud } from '@react-three/drei';
 import SpaceStars from './Stars';
 import Moon from './Moon';
+import EarthSystem from './EarthSystem';
 
-export default function SpaceCanvas() {
+export default function SpaceCanvas({ selectedLocation }) {
   return (
     <div style={{
       position: 'fixed',
@@ -18,7 +19,14 @@ export default function SpaceCanvas() {
       pointerEvents: 'none',
     }}>
       <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <mesh>
+              <sphereGeometry args={[0.2, 8, 8]} />
+              <meshBasicMaterial color="#0a1628" />
+            </mesh>
+          }
+        >
           <ambientLight intensity={0.3} />
           <directionalLight 
             position={[10, 10, 10]} 
@@ -34,7 +42,7 @@ export default function SpaceCanvas() {
           {/* Nebula/Cosmic Fog */}
           <group position={[0, 0, -20]}>
             <Cloud 
-              texture="/earth_clouds.jpg"
+              texture="https://unpkg.com/three-globe/example/img/clouds.png"
               opacity={0.3} 
               speed={0.2} 
               width={20} 
@@ -44,7 +52,7 @@ export default function SpaceCanvas() {
               position={[-10, 5, -5]}
             />
             <Cloud 
-              texture="/earth_clouds.jpg"
+              texture="https://unpkg.com/three-globe/example/img/clouds.png"
               opacity={0.2} 
               speed={0.1} 
               width={25} 
@@ -57,6 +65,7 @@ export default function SpaceCanvas() {
 
           <SpaceStars />
           <Moon />
+          <EarthSystem selectedLocation={selectedLocation} />
 
           {/* Post-Processing for cinematic glow */}
           <EffectComposer>
