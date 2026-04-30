@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Wind, Cloud, Sun, Moon, Compass, BarChart2, Shield, Activity } from 'lucide-react';
 
-export default function NightOwlUI() {
+export default function NightOwl() {
   const [isLocating, setIsLocating] = useState(false);
   const [viewMode, setViewMode] = useState('dashboard'); // 'dashboard' or 'analysis'
 
@@ -45,7 +45,7 @@ export default function NightOwlUI() {
         <div className="flex items-center gap-3">
           <Activity className="text-gray-700 w-5 h-5" />
           <div>
-            <h1 className="text-xl font-mono font-bold tracking-wider text-gray-800">NIGHTOWL // SKY_OBS_SYS</h1>
+            <h1 className="text-xl font-mono font-bold tracking-wider text-gray-800">NightOwl // SKY_OBS_SYS</h1>
             <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mt-0.5">National Aerospace & Observation Command</p>
           </div>
         </div>
